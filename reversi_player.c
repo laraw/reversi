@@ -12,6 +12,8 @@
 #define EXTRACHARS 2
 #define MAX_COORDINATES_LENGTH 3
 #define MIN_COORDINATES_LENGTH 3
+#define MIN_COORDINATE 1
+#define MAX_COORDINATE 8
 
 /**
  * Initialise the player's data. You should prompt the user for their name,
@@ -27,7 +29,7 @@ enum input_result reversi_player_init(struct reversi_player* curplayer)
         fgets(name,REVERSI_NAMELEN,stdin);
 
         if(name[strlen(name) - 1] != '\n') {
-            printf("Input was too long.\n");
+            printf("Input was too long. Input should be less than %i.\n", REVERSI_NAMELEN);
             read_rest_of_line();
         }
         else {
@@ -72,15 +74,23 @@ enum input_result reversi_player_move(struct reversi_player* curplayer,
     int success = FALSE;
     char coordinates[MAX_COORDINATES_LENGTH];
     char textInput[LSIZE + EXTRACHARS];
-
+    /* COORDINATES */
+    int x, y;
 
     /* PROMPT FOR COORDINATES AND VALIDATE INPUT IS NOT TOO LONG AND IS CORRECT FORMAT*/
     do {
             printf("Please enter a move as a comma separated coordinate pair: ");
+
             fgets(textInput, LSIZE + EXTRACHARS, stdin);
-            if(strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH)) {
-                    printf("Input was too long.\n");
+            textInput[strlen(textInput) - 1] = '\0';
+            if(strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH) {
+                    printf("Input was too long. Input was %i long. Minimum input is %i, maximum is %i \n", strlen(textInput), MIN_COORDINATES_LENGTH,
+                           MAX_COORDINATES_LENGTH);
                     read_rest_of_line();
+            }
+            else if((int)textInput[0] < MIN_COORDINATE || (int)textInput[0] > MAX_COORDINATE) {
+                printf("First coordinate must be an integer between %i and %i", MIN_COORDINATE, MAX_COORDINATE);
+                read_rest_of_line();
             }
             /* CHECK IF STRING CONTAINS A COMMA BETWEEN FIRST AND LAST CHAR */
 
