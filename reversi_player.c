@@ -10,6 +10,8 @@
 #include "reversi_gamerules.h"
 #define LSIZE 1024
 #define EXTRACHARS 2
+#define MAX_COORDINATES_LENGTH 3
+#define MIN_COORDINATES_LENGTH 3
 
 /**
  * Initialise the player's data. You should prompt the user for their name,
@@ -68,24 +70,25 @@ enum input_result reversi_player_move(struct reversi_player* curplayer,
 
 
     int success = FALSE;
-    char * coordinates;
+    char coordinates[MAX_COORDINATES_LENGTH];
     char textInput[LSIZE + EXTRACHARS];
 
 
     /* PROMPT FOR COORDINATES AND VALIDATE INPUT IS NOT TOO LONG AND IS CORRECT FORMAT*/
     do {
-        printf("Please enter a move as a comma separated coordinate pair: ");
-        while (fgets(textInput, LSIZE + EXTRACHARS, stdin) != NULL)
-        {
-            if(strlen(coordinates) > 3) {
-                printf("Input was too long.\n");
-                read_rest_of_line();
+            printf("Please enter a move as a comma separated coordinate pair: ");
+            fgets(textInput, LSIZE + EXTRACHARS, stdin);
+            if(strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH)) {
+                    printf("Input was too long.\n");
+                    read_rest_of_line();
             }
+            /* CHECK IF STRING CONTAINS A COMMA BETWEEN FIRST AND LAST CHAR */
+
+            /* CHECK IF FIRST CHAR IS VALUE BETWEEN 1-8 AND LAST CHAR VALUE BETWEEN 1-8  */
             else {
                 success = TRUE;
             }
 
-        }
 
 
 
