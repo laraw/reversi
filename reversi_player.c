@@ -8,6 +8,8 @@
 
 #include "reversi_player.h"
 #include "reversi_gamerules.h"
+#define LSIZE 1024
+#define EXTRACHARS 2
 
 /**
  * Initialise the player's data. You should prompt the user for their name,
@@ -66,21 +68,26 @@ enum input_result reversi_player_move(struct reversi_player* curplayer,
 
 
     int success = FALSE;
-    char coordinates[3];
+    char * coordinates;
+    char textInput[LSIZE + EXTRACHARS];
 
 
     /* PROMPT FOR COORDINATES AND VALIDATE INPUT IS NOT TOO LONG AND IS CORRECT FORMAT*/
     do {
         printf("Please enter a move as a comma separated coordinate pair: ");
-        fgets(coordinates,3,stdin);
+        while (fgets(textInput, LSIZE + EXTRACHARS, stdin) != NULL)
+        {
+            if(strlen(coordinates) > 3) {
+                printf("Input was too long.\n");
+                read_rest_of_line();
+            }
+            else {
+                success = TRUE;
+            }
 
-        if(strlen(coordinates) > 3) {
-            printf("Input was too long.\n");
-            read_rest_of_line();
         }
-        else {
-            success = TRUE;
-        }
+
+
 
     } while (success == FALSE);
 
