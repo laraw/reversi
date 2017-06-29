@@ -17,6 +17,10 @@
 static void swap_players(struct reversi_player ** lhs,
     struct reversi_player ** rhs)
 {
+    struct reversi_player ** tmp_player;
+    tmp_player = &lhs;
+    lhs = &rhs;
+    rhs = &tmp_player;
 }
 
 /**
@@ -31,28 +35,42 @@ void reversi_play_game(struct reversi_player players[])
     struct reversi_player * current_player, *other_player;
     reversi_gameboard board;
 
-    /* MY CODE*/
-    int failure = FALSE;
+    /* Initialise the Game */
+    BOOLEAN continue_game = TRUE;
     int randomnumber;
 
     reversi_gameboard_init(board);
     printf("Welcome to Reversi \n");
-    /*reversi_player_init(current_player);
-    reversi_player_init(other_player);*/
+    printf("--------------------- \n");
     reversi_player_init(current_player);
     reversi_player_init(other_player);
     reversi_gameboard_display(board);
 
-    /* Generate a random token for the player */
-
+    /* Generate a random token for each player */
     randomnumber = reversi_random_number();
     current_player->token = randomnumber == 1 ? CC_RED : CC_BLUE;
     other_player->token = current_player->token == CC_RED ? CC_BLUE : CC_RED;
 
-    reversi_player_move(current_player, board);
+    /* Commence game - current player making first move */
+    do{
+        BOOLEAN input_result = FALSE;
+        input_result = reversi_player_move(current_player, board);
+        if(input_result == TRUE) {
+            continue_game = TRUE;
+        }
+        else {
+                continue_game = FALSE;
+        }
+        /*swap_players(&current_player, &other_player);*/
+    }
+    while(continue_game == TRUE);
+
+
 
 
 }
+
+
 
 int reversi_random_number() {
     int randomnumber;

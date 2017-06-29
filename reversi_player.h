@@ -47,6 +47,8 @@ enum input_result reversi_player_move(struct reversi_player*, reversi_gameboard)
 
 const char * get_token_colour(struct reversi_player*);
 
+enum input_result tokenize_input(char* input, int * x, int * y);
+
 void print_player_details(struct reversi_player*);
 
 #endif

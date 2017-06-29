@@ -1,6 +1,6 @@
 /***********************************************************************
 * CPT220 - Programming in C
-* Study Period 2 2017 Assignment #1 
+* Study Period 2 2017 Assignment #1
 * Full Name        : EDIT HERE
 * Student Number   : EDIT HERE
 * Start up code provided by Paul Miller
@@ -31,5 +31,9 @@ enum input_result
     IR_FAILURE, IR_SUCCESS, IR_RTM
 };
 
+/* function to test if player has the game */
+BOOLEAN reversi_quit_game(char * input);
+
+/* clears the buffer */
 void read_rest_of_line(void);
 #endif

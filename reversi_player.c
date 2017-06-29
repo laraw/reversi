@@ -1,10 +1,10 @@
 /***********************************************************************
-* CPT220 - Programming in C
-* Study Period 2 2017 Assignment #1
-* Full Name        : Larissa Wilson
-* Student Number   : s3342496
-* Start up code provided by Paul Miller
-***********************************************************************/
+ * CPT220 - Programming in C
+ * Study Period 2 2017 Assignment #1
+ * Full Name        : Larissa Wilson
+ * Student Number   : s3342496
+ * Start up code provided by Paul Miller
+ ***********************************************************************/
 
 #include "reversi_player.h"
 #include "reversi_gamerules.h"
@@ -14,45 +14,36 @@
 #define MIN_COORDINATES_LENGTH 3
 #define MIN_COORDINATE 1
 #define MAX_COORDINATE 8
+#define DELIM " ,"
 
 /**
  * Initialise the player's data. You should prompt the user for their name,
  * set their token to CC_EMPTY and their score to 0.
  **/
-enum input_result reversi_player_init(struct reversi_player* curplayer)
-{
+enum input_result reversi_player_init(struct reversi_player * curplayer) {
     int success = FALSE;
     char name[REVERSI_NAMELEN];
 
     do {
         printf("Enter your player name: \n");
-        fgets(name,REVERSI_NAMELEN,stdin);
+        fgets(name, REVERSI_NAMELEN, stdin);
 
-        if(name[strlen(name) - 1] != '\n') {
+        if (name[strlen(name) - 1] != '\n') {
             printf("Input was too long. Input should be less than %i.\n", REVERSI_NAMELEN);
             read_rest_of_line();
-        }
-        else {
+        } else {
             success = TRUE;
         }
 
     } while (success == FALSE);
 
-
     name[strlen(name) - 1] = '\0';
-    strcpy(curplayer->name,name);
+    strcpy(curplayer->name, name);
     curplayer->score = 1;
     curplayer->token = CC_EMPTY;
     return IR_SUCCESS;
-    /* return IR_FAILURE */
-    /*
-        printf("Your name is: %s \n", curplayer->name);
-        printf("Your current score is: %i", curplayer->score);
-        printf("Your current colour is: %s", curplayer->token);
-    */
+
 }
-
-
 
 /**
  * Implements the player taking a move in the game. It starts by printing
@@ -62,49 +53,51 @@ enum input_result reversi_player_init(struct reversi_player* curplayer)
  * a comma and no other input on the line). Then you should try to apply
  * the move by calling the appropriate function in the game rules module.
  **/
-enum input_result reversi_player_move(struct reversi_player* curplayer,
-    reversi_gameboard game_board)
-{
-    /* CALCULATE CURRENT SCORE - TBI */
+enum input_result reversi_player_move(struct reversi_player * curplayer,
+    reversi_gameboard game_board) {
+
+    /* CALCULATE CURRENT SCORE */
+    reversi_player_calc_score(game_board, curplayer);
 
     /* PRINT OUT PLAYER INFORMATION */
     print_player_details(curplayer);
 
-
-    int success = FALSE;
-    char coordinates[MAX_COORDINATES_LENGTH];
+    /* DECLARE LOCAL VARIABLES */
+    BOOLEAN success = FALSE;
     char textInput[LSIZE + EXTRACHARS];
-    /* COORDINATES */
-    int x, y;
+    int x,y;
 
     /* PROMPT FOR COORDINATES AND VALIDATE INPUT IS NOT TOO LONG AND IS CORRECT FORMAT*/
     do {
-            printf("Please enter a move as a comma separated coordinate pair: ");
+        printf("Please enter a move as a comma separated coordinate pair: ");
 
-            fgets(textInput, LSIZE + EXTRACHARS, stdin);
-            textInput[strlen(textInput) - 1] = '\0';
-            if(strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH) {
-                    printf("Input was too long. Input was %i long. Minimum input is %i, maximum is %i \n", strlen(textInput), MIN_COORDINATES_LENGTH,
-                           MAX_COORDINATES_LENGTH);
-                    read_rest_of_line();
+        fgets(textInput, LSIZE + EXTRACHARS, stdin);
+        textInput[strlen(textInput) - 1] = '\0';
+
+        if (strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH) {
+            printf("Input was too long. Minimum input is %i, maximum is %i \n",
+                MIN_COORDINATES_LENGTH, MAX_COORDINATES_LENGTH);
+            read_rest_of_line();
+
+        } else if (textInput[0] == '\n') {
+            printf("Input was empty.");
+            read_rest_of_line();
+
+        } else {
+            if (tokenize_input(textInput, &x, &y) == IR_SUCCESS) {
+
+                /* PASS THE COORDINATES X & Y INTO THE APPLY MOVE */
+                /* SET reversi_coordinate->y = y; reversi_coordinate->x -> x) */
+                struct reversi_coordinate coordinates;
+                coordinates.y = y;
+                coordinates.x = x;
+                reversi_rules_applymove(game_board, curplayer, &coordinates);
+                return IR_SUCCESS;
             }
-            else if((int)textInput[0] < MIN_COORDINATE || (int)textInput[0] > MAX_COORDINATE) {
-                printf("First coordinate must be an integer between %i and %i", MIN_COORDINATE, MAX_COORDINATE);
-                read_rest_of_line();
-            }
-            /* CHECK IF STRING CONTAINS A COMMA BETWEEN FIRST AND LAST CHAR */
 
-            /* CHECK IF FIRST CHAR IS VALUE BETWEEN 1-8 AND LAST CHAR VALUE BETWEEN 1-8  */
-            else {
-                success = TRUE;
-            }
-
-
-
+        }
 
     } while (success == FALSE);
-
-    /* TOKENIZE THE COORDINATES ONCE VALIDATED*/
 
 
     return IR_SUCCESS;
@@ -112,21 +105,67 @@ enum input_result reversi_player_move(struct reversi_player* curplayer,
 
 /**
  * Returns the token colour based on the token assigned
-**/
+ **/
 
-const char * get_token_colour(struct reversi_player* curplayer) {
-    if(curplayer->token == CC_RED) {
-        return ANSI_COLOR_RED "red" ANSI_COLOR_RESET;
-    }
-    else {
-        return ANSI_COLOR_BLUE "blue" ANSI_COLOR_RESET;
+const char * get_token_colour(struct reversi_player * curplayer) {
+    if (curplayer->token == CC_RED) {
+        return ANSI_COLOR_RED "red"
+        ANSI_COLOR_RESET;
+    } else {
+        return ANSI_COLOR_BLUE "blue"
+        ANSI_COLOR_RESET;
     }
 
 }
 
-void print_player_details(struct reversi_player* curplayer) {
+void print_player_details(struct reversi_player * curplayer) {
     printf("It is %s's turn and their current colour is %s \n", curplayer->name, get_token_colour(curplayer));
     printf("Their score is currently: %i \n", curplayer->score);
+}
 
+enum input_result tokenize_input(char * input, int * x, int * y) {
+    int i = 0;
+    char * token;
+    int tempInteger = 0;
+    char * tmpPtr;
+    int cnt_coordinates = 1;
 
+    token = strtok(input, DELIM);
+
+    while (token != NULL) {
+
+        i++;
+
+        if (strlen(token) > 1) {
+            printf("Input was invalid - ensure your coordinates include a comma separator");
+            read_rest_of_line();
+            return IR_FAILURE;
+        } else {
+
+            tempInteger = (int) strtol(token, & tmpPtr, 10);
+
+            if ((tempInteger >= MIN_COORDINATE || tempInteger <= MAX_COORDINATE)) {
+                if (cnt_coordinates == 1) {
+                    *x = tempInteger;
+                    cnt_coordinates++;
+
+                }
+                if (cnt_coordinates == 2) {
+                    *y = tempInteger;
+
+                }
+
+            } else {
+                printf("Coordinates are out of range.");
+                read_rest_of_line();
+                return IR_FAILURE;
+
+            }
+
+        }
+        token = strtok(NULL, DELIM);
+
+    }
+
+    return IR_SUCCESS;
 }
