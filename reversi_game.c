@@ -17,10 +17,10 @@
 static void swap_players(struct reversi_player ** lhs,
     struct reversi_player ** rhs)
 {
-    struct reversi_player ** tmp_player;
-    tmp_player = &lhs;
-    lhs = &rhs;
-    rhs = &tmp_player;
+    struct reversi_player* tmp_player = *lhs;
+    *lhs = *rhs;
+    *rhs = tmp_player;
+
 }
 
 /**
@@ -61,7 +61,7 @@ void reversi_play_game(struct reversi_player players[])
         else {
                 continue_game = FALSE;
         }
-        /*swap_players(&current_player, &other_player);*/
+        swap_players(other_player, current_player);
     }
     while(continue_game == TRUE);
 
