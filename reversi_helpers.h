@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <ctype.h>
+#include <time.h>
 #include "reversi_shared.h"
 #include "reversi_gameboard.h"
 
@@ -36,4 +37,8 @@ BOOLEAN reversi_quit_game(char * input);
 
 /* clears the buffer */
 void read_rest_of_line(void);
+
+/* returns a random token */
+enum reversi_cell_contents reversi_random_number();
+
 #endif

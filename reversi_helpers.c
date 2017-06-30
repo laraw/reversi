@@ -7,6 +7,7 @@
 ***********************************************************************/
 
 #include "reversi_helpers.h"
+
 #define LSIZE 1024
 #define EXTRACHARS 2
 
@@ -49,4 +50,17 @@ BOOLEAN reversi_quit_game(char * input) {
 
 }
 
+enum reversi_cell_contents reversi_random_number() {
+    int randomnumber;
+    time_t t;
+    srand((unsigned) time(&t));
+    randomnumber = rand() % 2;
+    if(randomnumber == 1) {
+        return CC_RED;
+    }
+    else {
+        return CC_BLUE;
+    }
+
+}
 

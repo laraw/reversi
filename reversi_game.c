@@ -17,10 +17,11 @@
 static void swap_players(struct reversi_player ** lhs,
     struct reversi_player ** rhs)
 {
-    struct reversi_player* tmp_player = *lhs;
+
+    struct reversi_player* tmp_player;
+    tmp_player = *lhs;
     *lhs = *rhs;
     *rhs = tmp_player;
-
 }
 
 /**
@@ -36,34 +37,44 @@ void reversi_play_game(struct reversi_player players[])
     reversi_gameboard board;
 
     /* Initialise the Game */
-    BOOLEAN continue_game = TRUE;
+    BOOLEAN continue_game;
+
+    continue_game = TRUE;
     int randomnumber;
 
     reversi_gameboard_init(board);
     printf("Welcome to Reversi \n");
     printf("--------------------- \n");
+
     reversi_player_init(current_player);
     reversi_player_init(other_player);
-    reversi_gameboard_display(board);
 
     /* Generate a random token for each player */
-    randomnumber = reversi_random_number();
-    current_player->token = randomnumber == 1 ? CC_RED : CC_BLUE;
+    current_player->token = reversi_random_number();
     other_player->token = current_player->token == CC_RED ? CC_BLUE : CC_RED;
+    reversi_gameboard_display(board);
 
+
+
+
+    BOOLEAN input_result;
+    input_result = FALSE;
     /* Commence game - current player making first move */
+
     do{
-        BOOLEAN input_result = FALSE;
-        input_result = reversi_player_move(current_player, board);
-        if(input_result == TRUE) {
-            continue_game = TRUE;
+
+        if(current_player->token == CC_BLUE) {
+            reversi_player_move(current_player, board);
         }
         else {
-                continue_game = FALSE;
+            reversi_player_move(other_player, board);
         }
-        swap_players(other_player, current_player);
+
+        swap_players(current_player, other_player);
+
+
     }
-    while(continue_game == TRUE);
+    while(continue_game);
 
 
 
@@ -72,11 +83,4 @@ void reversi_play_game(struct reversi_player players[])
 
 
 
-int reversi_random_number() {
-    int randomnumber;
-    time_t t;
-    srand((unsigned) time(&t));
-    randomnumber = rand() % 2;
-    return randomnumber;
-}
 

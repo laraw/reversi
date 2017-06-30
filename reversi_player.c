@@ -22,14 +22,18 @@
  **/
 enum input_result reversi_player_init(struct reversi_player * curplayer) {
     int success = FALSE;
-    char name[REVERSI_NAMELEN];
+    char name[REVERSI_NAMELEN + 1];
 
     do {
         printf("Enter your player name: \n");
-        fgets(name, REVERSI_NAMELEN, stdin);
+        fgets(name, REVERSI_NAMELEN + 1, stdin);
 
-        if (name[strlen(name) - 1] != '\n') {
-            printf("Input was too long. Input should be less than %i.\n", REVERSI_NAMELEN);
+        if(name[0] == '\n') {
+            printf("Error - Input was empty. ");
+            read_rest_of_line();
+        }
+        else if (name[strlen(name) - 1] != '\n') {
+            printf("Error - Input was too long. Input should be less than %i.\n", REVERSI_NAMELEN);
             read_rest_of_line();
         } else {
             success = TRUE;
@@ -37,10 +41,13 @@ enum input_result reversi_player_init(struct reversi_player * curplayer) {
 
     } while (success == FALSE);
 
+    /* Overwrite the \n character with \0. */
     name[strlen(name) - 1] = '\0';
-    strcpy(curplayer->name, name);
+    strncpy(curplayer->name, name,strlen(name));
     curplayer->score = 1;
-    curplayer->token = CC_EMPTY;
+
+
+
     return IR_SUCCESS;
 
 }
@@ -63,7 +70,8 @@ enum input_result reversi_player_move(struct reversi_player * curplayer,
     print_player_details(curplayer);
 
     /* DECLARE LOCAL VARIABLES */
-    BOOLEAN success = FALSE;
+    BOOLEAN success;
+    success = FALSE;
     char textInput[LSIZE + EXTRACHARS];
     int x,y;
 
@@ -75,12 +83,12 @@ enum input_result reversi_player_move(struct reversi_player * curplayer,
         textInput[strlen(textInput) - 1] = '\0';
 
         if (strlen(textInput) > MAX_COORDINATES_LENGTH || strlen(textInput) < MIN_COORDINATES_LENGTH) {
-            printf("Input was too long. Minimum input is %i, maximum is %i \n",
+            printf("Error - Input was too short or too long. Minimum input is %i, maximum is %i \n",
                 MIN_COORDINATES_LENGTH, MAX_COORDINATES_LENGTH);
             read_rest_of_line();
 
         } else if (textInput[0] == '\n') {
-            printf("Input was empty.");
+            printf("Error - Input was empty.");
             read_rest_of_line();
 
         } else {
@@ -137,7 +145,7 @@ enum input_result tokenize_input(char * input, int * x, int * y) {
         i++;
 
         if (strlen(token) > 1) {
-            printf("Input was invalid - ensure your coordinates include a comma separator");
+            printf("Error - Input was invalid - ensure your coordinates include a comma separator");
             read_rest_of_line();
             return IR_FAILURE;
         } else {
@@ -156,7 +164,7 @@ enum input_result tokenize_input(char * input, int * x, int * y) {
                 }
 
             } else {
-                printf("Coordinates are out of range.");
+                printf("Error - Coordinates are out of range.");
                 read_rest_of_line();
                 return IR_FAILURE;
 

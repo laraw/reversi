@@ -18,11 +18,45 @@ BOOLEAN reversi_rules_applymove(reversi_gameboard board ,
         struct reversi_player * player,
         const struct reversi_coordinate * coords)
 {
-    printf("Coordinate x is %i \n", coords->x);
-    printf("Coordinate y is %i \n", coords->y);
-    if(board[coords->x][coords->y] == CC_EMPTY) {
-            return TRUE;
+    int radius, temp_x, temp_y;
+    printf("Success coordinates");
 
+    /* first check if empty*/
+    if(board[coords->x][coords->y] == CC_EMPTY) {
+
+       /* Move: 5,3
+            VALID IF AN ENEMY PIECE IS IN ANY OF THESE DIRECTIONS
+
+            FUNCTION CHECK_SURROUNDING_SQUARES (INT COORD_X, COORD_Y)
+
+            COORDINATE [X][Y-1]
+            COORDINATE [X][Y+1]
+            COORDINATE [X-1][Y]
+            COORDINATE [X-1][Y-1]
+            COORDINATE [X-1][Y+1]
+            COORDINATE [X+1][Y]
+            COORDINATE [X+1][Y-1]
+            COORDINATE [X+1][Y+1]
+
+            IF(ANY OF ABOVE == ENEMY SQUARE) {
+                SET COORD_X & COORD_Y TO THIS LOCATION
+                EG. ENEMY PIECE IS 5,2
+                coordinates are check 5,2
+                (IF [COORD_X ][COORD_Y-1] == PLAYER->TOKEN) {
+                    THEN MOVE = VALID
+                    SET BOARD[X][Y] == PLAYER->TOKEN EG CC_RED
+
+
+                }
+
+            }
+
+        */
+
+    }
+
+    else{
+        return FALSE;
     }
 
     return FALSE;
